@@ -39,6 +39,5 @@ int main(int afg, char *argv)
        }
        fclose(f1);
        printf("\nFile Transferred\n");
-       
        return 0;
 }
