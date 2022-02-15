@@ -36,6 +36,8 @@ int main(int afg, char *argv)
        {
             write(newsockfd, buff,MAX);
             printf("\n");
+
+            
        }
        fclose(f1);
        printf("\nFile Transferred\n");
