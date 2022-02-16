@@ -35,9 +35,7 @@ int main(int afg, char *argv)
        while(fgets(buff, 4096, f1)!=NULL)
        {
             write(newsockfd, buff,MAX);
-            printf("\n");
-
-            
+            printf("\n");            
        }
        fclose(f1);
        printf("\nFile Transferred\n");
