@@ -1,6 +1,6 @@
-    / *******select.c*********/
+    /*******select.c*********/
 
-    / *******Using select() for I/O multiplexing */
+    /****Using select() for I/O multiplexing */
 
     #include <stdio.h>
 

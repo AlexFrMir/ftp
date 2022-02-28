@@ -7,7 +7,7 @@
 #include<string.h>
 #include <arpa/inet.h>
 #include<unistd.h>
-#define SERV_TCP_PORT 5035
+#define SERV_TCP_PORT 2020
 #define MAX 60
 int main(int arg,char*argv[])
 {
