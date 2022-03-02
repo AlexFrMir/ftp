@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <errno.h>
 #include <unistd.h>
@@ -20,6 +21,7 @@ int main(){
     /* Variable and structure definitions. */
     int sd, sd2, rc, length = sizeof(int);
     int totalcnt = 0, on = 1;
+    char num1[100],nom2[100], signo;
     char temp;
     char buffer[BufferLength];
     struct sockaddr_in serveraddr;
@@ -65,13 +67,13 @@ int main(){
     serveraddr.sin_port = htons(SERVPORT);
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    printf("Using %d, listening at %d\n", inet_ntoa(serveraddr.sin_addr), SERVPORT);
+    printf("Using %s, listening at %d\n", inet_ntoa(serveraddr.sin_addr), SERVPORT);
 
     /* After the socket descriptor is created, a bind() */
     /* function gets a unique name for the socket. */
     /* In this example, the user sets the */
     /* s_addr to zero, which allows the system to */
-    /* connect to any client that used port 3005. */
+    /* connect to any client that used port 3111. */
     if((rc = bind(sd, (struct sockaddr *)&serveraddr, sizeof(serveraddr))) < 0){
         perror("Server-bind() error");
         
@@ -110,107 +112,110 @@ int main(){
     
     /* accept() the incoming connection request. */
     int sin_size = sizeof(struct sockaddr_in);
-
+/*
     if((sd2 = accept(sd, (struct sockaddr *)&their_addr, &sin_size)) < 0){
         perror("Server-accept() error");
         close(sd);
         exit (-1);
     }else{
         printf("Server-accept() is OK\n");
-    }
+    }*/
+    while((sd2 = accept(sd, (struct sockaddr *)&their_addr, &sin_size)) > 0){
+        printf(" this is the data of accepted connection: %d \n",sd2);
+        /*client IP*/
+        printf("Server-new socket, sd2 is OK...\n");
+        printf("Got connection from client: %s\n", inet_ntoa(their_addr.sin_addr));
 
-    /*client IP*/
-    printf("Server-new socket, sd2 is OK...\n");
-    printf("Got connection from the f***ing client: %d\n", inet_ntoa(their_addr.sin_addr));
+        /* The select() function allows the process to */
+        /* wait for an event to occur and to wake up */
+        /* the process when the event occurs. In this */
+        /* example, the system notifies the process */
+        /* only when data is available to read. */
+        /***********************************************/
 
-    /* The select() function allows the process to */
-    /* wait for an event to occur and to wake up */
-    /* the process when the event occurs. In this */
-    /* example, the system notifies the process */
-    /* only when data is available to read. */
-    /***********************************************/
-
-    /* Wait for up to 15 seconds on */
-    /* select() for data to be read. */
-    FD_ZERO(&read_fd);
-    FD_SET(sd2, &read_fd);
-    rc = select(sd2+1, &read_fd, NULL, NULL, &timeout);
-    if((rc == 1) && (FD_ISSET(sd2, &read_fd))){
-        /* Read data from the client. */
-        totalcnt = 0;
-        while(totalcnt < BufferLength){
-            /* When select() indicates that there is data */
-            /* available, use the read() function to read */
-            /* 100 bytes of the string that the */
-            /* client sent. */
-            /***********************************************/
-            /* read() from client */
-            rc = read(sd2, &buffer[totalcnt], (BufferLength - totalcnt));
-            if(rc < 0){
-                perror("Server-read() error");
-                close(sd);
-                close(sd2);
-                exit (-1);
-            }else if (rc == 0){
-                printf("Client program has issued a close()\n");
-                close(sd);
-                close(sd2);
-                exit(-1);
-            }else{
-                totalcnt += rc;
-                printf("Server-read() is OK\n");
-            }   
-        }
-    }else if (rc < 0){
-        perror("Server-select() error");
-        close(sd);
-        close(sd2);
-        exit(-1);
-    }else{
-        /* rc == 0 */
-        printf("Server-select() timed out.\n");
-        close(sd);
-        close(sd2);
-        exit(-1);
-    }
-    /* Shows the data */
-    printf("Received data from the f***ing client: %s\n", buffer);
-    
-    /* Echo some bytes of string, back */
-    /* to the client by using the write() */   
-    /* function. */
-    /************************************/
-
-    /* write() some bytes of string, */
-    /* back to the client. */
-    printf("Server-Echoing back to client...\n");
-    rc = write(sd2, buffer, totalcnt);
-    if(rc != totalcnt){
-        perror("Server-write() error");
-        /* Get the error number. */
-        rc = getsockopt(sd2, SOL_SOCKET, SO_ERROR, &temp, &length);
-        if(rc == 0){
-            /* Print out the asynchronously */
-            /* received error. */
-            errno = temp;
-            perror("SO_ERROR was: ");
+        /* Wait for up to 15 seconds on */
+        /* select() for data to be read. */
+        FD_ZERO(&read_fd);
+        FD_SET(sd2, &read_fd);
+        rc = select(sd2+1, &read_fd, NULL, NULL, &timeout);
+        if((rc == 1) && (FD_ISSET(sd2, &read_fd))){
+            /* Read data from the client. */
+            totalcnt = 0;
+            while(totalcnt < BufferLength){
+                /* When select() indicates that there is data */
+                /* available, use the read() function to read */
+                /* 100 bytes of the string that the */
+                /* client sent. */
+                /***********************************************/
+                /* read() from client */
+                rc = read(sd2, &buffer[totalcnt], (BufferLength - totalcnt));
+                if(rc < 0){
+                    perror("Server-read() error");
+                    close(sd);
+                    close(sd2);
+                    exit (-1);
+                }else if (rc == 0){
+                    printf("Client program has issued a close()\n");
+                    close(sd);
+                    close(sd2);
+                    exit(-1);
+                }else{
+                    totalcnt += rc;
+                    printf("Server-read() is OK\n");
+                }   
+            }
+        }else if (rc < 0){
+            perror("Server-select() error");
+            close(sd);
+            close(sd2);
+            exit(-1);
         }else{
-            printf("Server-write() is OK\n");
+            /* rc == 0 */
+            printf("Server-select() timed out.\n");
+            close(sd);
+            close(sd2);
+            exit(-1);
         }
-        close(sd);
-        close(sd2);
-        exit(-1);
-    }
+        /* Shows the data */
+        printf("Received data from the f***ing client: %s\n", buffer);
 
-    /* When the data has been sent, close() */
-    /* the socket descriptor that was returned */
-    /* from the accept() verb and close() the */
-    /* original socket descriptor. */
-    /*****************************************/
-    
-    /* Close the connection to the client and */
-    /* close the server listening socket. */
-    /******************************************/
+        /* Echo some bytes of string, back */
+        /* to the client by using the write() */   
+        /* function. */
+        /************************************/
+
+        /* write() some bytes of string, */
+        /* back to the client. */
+        printf("Server-Echoing back to client...\n");
+        rc = write(sd2, buffer, totalcnt);
+        if(rc != totalcnt){
+            perror("Server-write() error");
+            /* Get the error number. */
+            rc = getsockopt(sd2, SOL_SOCKET, SO_ERROR, &temp, &length);
+            if(rc == 0){
+                /* Print out the asynchronously */
+                /* received error. */
+                errno = temp;
+                perror("SO_ERROR was: ");
+            }else{
+                printf("Server-write() is OK\n");
+            }
+            close(sd);
+            close(sd2);
+            exit(-1);
+        }
+
+        /* When the data has been sent, close() */
+        /* the socket descriptor that was returned */
+        /* from the accept() verb and close() the */
+        /* original socket descriptor. */
+        /*****************************************/
+
+        /* Close the connection to the client and */
+        /* close the server listening socket. */
+        /******************************************/
+        
+    }   
     close(sd2);
     close(sd);
     exit(0);
