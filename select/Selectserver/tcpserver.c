@@ -1,11 +1,3 @@
-    /************tcpserver.c************************/
-
-    /* header files needed to use the sockets API */
-
-    /*File contain Macro, Data Type and Structure etc */
-
-    /***********************************************/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
