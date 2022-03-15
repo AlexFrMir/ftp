@@ -12,6 +12,7 @@
 int main(int arg,char*argv[])
 {
        int sockfd,n;
+       
        struct sockaddr_in serv_addr;
        struct hostent*server;
        char send[MAX],recvline[MAX],s[MAX],name[MAX];
