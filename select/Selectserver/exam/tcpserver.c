@@ -71,13 +71,9 @@ int main(int argc, char const *argv[]){
         printf("Using %s, listening at %d\n", inet_ntoa(serveraddr.sin_addr), SERVPORT);
 
         /* After the socket descriptor is created, a bind() */
-
         /* function gets a unique name for the socket. */
-
         /* In this example, the user sets the */
-
         /* s_addr to zero, which allows the system to */
-
         /* connect to any client that used port 3005. */
 
         if((rc = bind(sd, (struct sockaddr *)&serveraddr, sizeof(serveraddr))) < 0){
@@ -145,7 +141,7 @@ int main(int argc, char const *argv[]){
         /*client IP*/
         printf("Server-new socket, sd2 is OK...\n");
         printf("Got connection from the f***ing client: %s\n", inet_ntoa(their_addr.sin_addr));
-     
+     do{
         /* The select() function allows the process to */
         /* wait for an event to occur and to wake up */
         /* the process when the event occurs. In this */
@@ -272,9 +268,9 @@ int main(int argc, char const *argv[]){
 
             exit(-1);
 
-        }
+            }
 
-         
+        }while(buffer != "s");
 
         /* When the data has been sent, close() */
 

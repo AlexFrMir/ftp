@@ -19,7 +19,7 @@
 #define SERVER "The_server_name_or_IP"
 
 /* Server's port number */
-#define SERVPORT 3112
+#define SERVPORT 3111
 
 /* Pass in 1 parameter which is either the */
 /* address or host name of the server, or */
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]){
     }else{
         printf("Connection established...\n");
     }
-do{
+
     /* Send string to the server using */
     /* the write() function. */
     /*********************************************/
@@ -153,7 +153,6 @@ do{
     /****************************************/
 
     /* Close socket descriptor from client side. */
-}while(buffer != "s");
     close(sd);
     exit(0);
     return 0;
